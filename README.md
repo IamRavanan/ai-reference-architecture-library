@@ -2,44 +2,44 @@
 
 # AI Reference Architecture Library
 
-Short blurb about what your project does.
+This project consists of a collection of FSI-specific AI reference architectures. The library is part of the larger **AI Governance Framework** ecosystem and will both leverage, and be leveraged by, other framework components. Each architecture is designed and curated by a representative pool of professionals from FSIs, system integrators, and technology providers, and will be externally validated by a small group of AI domain experts.
 
-## Installation
+Each architecture will be threat-modelled, with risks and mitigations taken from the AI Governance Framework catalogue, providing a practical and unified view of the applicable security baseline to design, deploy, and operate the system within agreed risk tolerances.
 
-OS X & Linux:
+It is critical for the project that our output is usable and applicable to the FSI vertical. To ensure collaboration is effective, industry-standard, and unambiguous, we will establish the following guardrails:
 
-```sh
-npm install my-crazy-module --save
-```
+1. Rigour in definitions
+2. Agreement on naming conventions (e.g., “risk” vs “threat”)
+3. Agreement on architecture layers (e.g., data, inference, agent), components within them, and data flows
 
-Windows:
+## Ways of Working
 
-```sh
-edit autoexec.bat
-```
+We agreed that a visual tool that enables collaboration makes the most sense to start with. **draw.io** (diagrams.net) appears to be the best choice, as it is commonly used within FSIs. We will start this way, but unambiguous definitions and naming conventions will also be captured in individual files within the appropriate sub-folders.
 
-## Usage example
+Each architecture (with a shortcut to draw.io) will be stored in a subfolder of the main repository. At this stage it is unclear whether further folder nesting will be required (e.g., AI category as the main folder, and individual architectures as subfolders).
 
-A few motivating and useful examples of how your project can be used. Spice this up with code blocks and potentially screenshots / videos ([LiceCap](https://www.cockos.com/licecap/) is great for this kind of thing).
+Threat modelling will be performed on the architecture itself in a user-friendly way.  
 
-_For more examples and usage, please refer to the [Wiki][wiki]._
 
-## Development setup
+**Example**
 
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
+<img width="573" height="438" alt="example-visual-threat-model" src="https://github.com/user-attachments/assets/73547b46-040a-4b15-a52c-e330bd2a3b9d" />  
 
-```sh
-make install
-npm test
-```
+
+When deemed appropriate, both architectures and associated threat models will be codified in **CALM** to ensure reusability across the **FINOS** member base that uses it.
 
 ## Roadmap
 
-List the roadmap steps; alternatively link the Confluence Wiki page where the project roadmap is published.
+Identify and document:
 
-1. Item 1
-2. Item 2
-3. ....
+1. Key definitions (layers, components, etc.) — **November 2025**
+2. A naming convention (this may require working with other projects such as the AI Governance Framework catalogue) — **November 2025**
+3. The sequence of AI systems we want to design — **December 2025**:
+   - Single-agent agentic AI
+   - Multi-agent agentic AI
+   - …
+
+Any actual design work will begin in **January 2026**.
 
 ## Contributing
 
