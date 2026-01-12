@@ -180,5 +180,3 @@ Every layer in the architecture connects to the Observability Layer.
 The Observability Layer does not send data back to other layers; instead, it provides the visibility and insight required for monitoring, diagnostics, compliance, and operational excellence.
 
 ---
-
-
