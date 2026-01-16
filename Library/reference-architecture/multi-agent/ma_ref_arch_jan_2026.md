@@ -1,31 +1,35 @@
 # Executive Summary
-This reference architecture defines a modular, governed, and extensible multi‑agent system designed for enterprise and financial‑institution environments. It provides a structured approach for orchestrating agents, models, knowledge sources, and external systems while maintaining strong controls around safety, compliance, observability, and human oversight.
-The architecture is organized into distinct layers, each with a clear responsibility:
-- The User Interaction Layer provides the entry point for applications and end‑users.
-- The Agent Gateway governs how requests enter the agent ecosystem.
-- The Agent Layer performs reasoning, planning, sequencing, and refinement.
-- The Knowledge Layer supplies grounding and enterprise information retrieval.
-- The LLM Gateway manages access to approved language models.
-- The MCP Gateway manages access to approved MCP servers.
-- The Evaluation Layer provides feedback, supervision, runtime protection, and adaptive learning.
-- The Observability Layer collects logs, traces, metrics, events, and anomalies from every layer.
+This reference architecture defines a modular, governed, and extensible multi‑agent system designed for enterprise environments. It provides a structured approach for orchestrating agents, models, and tools while enforcing zero-trust security model that ensures safety, compliance, observability, and human oversight.
+
+The architecture is organized into distinct layers:
+
+- **User Interaction Layer**: The entry point for applications and end‑users.
+- **Agent Gateway Layer**: Governs all incoming requests with strict authentication, authorization and policy enforcement.
+- **Agent Layer**: The core of the system, containing:
+    - **Agent Collaboration Patterns**: High-level strategies for how agents work together
+    - **Unified Agent Runtime**: The secure, sandboxed environment where all agent execution occurs. It contains the core components for agent operation, including a Tools Layer (with built-in tools like Shell and I/O), memory management and adaptive learning capabilities.
+- **Knowledge Layer**: Provides grounding data and retrieval services for agents.
+- **LLM & MCP Layer**: Secure gateways that manage access to approved models and external tools, each with its own registry and guardrails.
+- **Evaluation Layer**: provides feedback, supervision, runtime protection, and adaptive learning.
+- **Observability Layer**: collects logs, traces, metrics, events, and anomalies from every layer.
+
 Together, these layers form a cohesive system that supports safe, reliable, and auditable agentic workflows. The architecture emphasizes governance, modularity, and interoperability, ensuring that organizations can scale their agent capabilities while maintaining control and trust.
 
 # Table of Contents
 - [Executive Summary](#executive-summary)
 - [Multi Agent Reference Architecture](#multi-agent-reference-architecture)
 - [User Interaction Layer](#user-interaction-layer)
-- [Agent Gateway](#agent-gateway)
+- [Agent Gateway Layer](#agent-gateway-layer)
 - [Agent Layer](#agent-layer)
 - [Knowledge Layer](#knowledge-layer)
-- [LLM Gateway](#llm-gateway)
-- [MCP Gateway](#mcp-gateway)
+- [LLM Layer](#llm-layer)
+- [MCP Layer](#mcp-layer)
 - [Evaluation Layer](#evaluation-layer)
 - [Observability Layer](#observability-layer)
 
 # Multi Agent Reference Architecture
 
-![My diagram](maa_ref_arch_jan_2026.svg)
+![My diagram](ma_ref_arch_jan_2026.svg)
 
 
 # User Interaction Layer
@@ -43,7 +47,7 @@ The application also implements human‑in‑the‑loop controls that allow user
 
 ---
 
-# Agent Gateway
+# Agent Gateway Layer
 
 The Agent Gateway provides a controlled entry point into the agent layer. It manages how applications interact with agents, enforces policies, and ensures that all agent activity is governed, discoverable, and observable. The gateway centralizes registration, routing, and guardrail enforcement so that downstream agents operate within defined constraints.
 
@@ -54,7 +58,7 @@ The Agent Gateway provides a controlled entry point into the agent layer. It man
     The Gateway is responsible for routing requests from the application to the appropriate agent. It validates incoming requests, applies routing rules, and ensures that each request is directed to the correct agent or agent group. The gateway abstracts the complexity of the agent layer and provides a consistent interface for the application.
 
 - ## Guardrails and Policies
-    Guardrails and policies enforce operational, safety, compliance, authentication, and authorization requirements before requests reach the agent layer. This includes input validation, content filtering, access control, rate limits, and policy checks. These controls ensure that agent behavior remains aligned with organizational standards and regulatory expectations.
+    Guardrails and policies enforce a zero-trust security model, where all inputs are treated as untrusted until verified. This layer is responsible for authentication and authorization, ensuring every request is validate before it reaches the agent layer. Key functions include input validation, content filtering, access control, rate limits, and dynamic policy enforcement. These controls ensure that agent behavior remains aligned with organizational standards and regulatory expectations and they prevent malicious or malformed inputs from compromising the system.
 
 ---
 
@@ -62,26 +66,33 @@ The Agent Gateway provides a controlled entry point into the agent layer. It man
 
 The Agent Layer provides the core reasoning, coordination, and task‑execution capabilities of the system. It interprets validated requests from the Agent Gateway, plans the sequence of actions required, and produces responses through structured agentic workflows. This layer supports planning, sequencing, refinement, memory management, and integration with supporting services.
 
-- ## Supervisor Agent  
-    Coordinates the overall workflow within the agent layer. It interprets the incoming request, determines the sequence of steps required, and manages the interactions between internal components and external services.
+- ## Agent Collaboration Patterns
+    The Agent layer supports multiple patterns for collaboration, allowing for flexibility in how tasks are decomposed and executed:
+    - **Supervisor/Worker**: A supervisor agent decomposes a complex task and orchestrates a team of specialized worker agents.
+    - **Skills-Based Routing**: A request is routed based on a required "skill" to an available agent that possess that skill.
+    - **Agent as a Tool**: A dynamic pattern where one agent can invoke another agent as if it were a tool, enabling handoff to specialists.
 
-- ## Response Generator  
-    Produces candidate outputs based on the supervisor’s direction. It supports iterative refinement by generating and improving responses until the final output meets the expected quality.
+- ## Unified Agent Runtime
+    The runtime is the secure, sandboxed environment where all agentic reasoning and execution occurs. It provides foundational capabilites for state management, secure execution, learning and contains the core memory and tooling components for the agents.
 
-- ## Short‑Term Memory  
-    Maintains contextual information required during task execution. This includes temporary state, conversation context, and intermediate artifacts that support sequencing and refinement.
+    - **State Management**: Manages the complete state of a task to enable pause, resume, and handoff capabilities.
+    - **Secure Execution**: Intercepts and validates all tool call requests from the agent, handling execution and credentials securely within the sandbox.
+    - **Collaboration/Handoff**: Enables stateful collaboration between agents through shared access to memory and state.
+    - **Adaptive Learning**: Generates learning signals based on execution outcomes to refine prompts, adjust agent configurations, or improve tool selection strategies.
+    - **Workspace File System**: Provides a sandboxed, persistent file system that agents can use for reading and writing files, enabling them to work with large artifacts
 
-- ## MCP Client Integration  
-    Allows agents to connect to an MCP Gateway, which provides access to registered MCP servers. This enables agents to invoke tools, services, and enterprise systems as part of task execution.
+    - **Tools Layer**: A collection of built-in, trusted tools that provide fundamental capabilities.
+        - **MCP Client**: The Secure bridge from the runtime to the external MCP Layer for accessing specialized, high-risk or enterprise specific tools.
+        - **Shell Tool**: A sandboxed shell environment for executing basic commands.
+        - **I/O Tool**: Provides capabilites for reading from and writing to the workspace file system.
+        - **Web Search Tool**: A built-in tool for performing web searches.
 
-### Relationships to Other Layers
+    - **Short-Term Memory**: Manages the immediate context for the agent's reasoning loop.
+        - **In-session context manager**: Employs strategies like trimming and summarization to manage context length, cost and latency.
 
-- **Agent Gateway:** Receives validated and policy‑compliant requests from the Agent Gateway and returns final outputs through the same path.  
-- **LLM Gateway:** Sends inference requests to the LLM Gateway and receives inference responses from approved models in the model catalog.  
-- **MCP Gateway:** Connects to the MCP Gateway to access registered MCP servers for tool and service integration.  
-- **Knowledge Layer:** Retrieves relevant information and grounding data from the Knowledge Layer.  
-- **Observability Layer:** Emits logs, traces, metrics, and events to the Observability Layer for monitoring and traceability.  
-- **Evaluation Layer:** Exchanges signals with the Evaluation Layer for feedback, human supervision, runtime protection, and adaptive learning. This is a bidirectional relationship.
+    - **Long-Term Memory**: Maintains durable information across sessions to provide personalization and continuity.
+        - **Session summaries**: Stores summaries of past interactions for future reference.
+        - **User/Task personalization**: Retains user preferences and task specific information to tailor future interactions.
 
 ---
 
@@ -89,48 +100,45 @@ The Agent Layer provides the core reasoning, coordination, and task‑execution 
 
 The Knowledge Layer provides the information foundation that supports agent reasoning, grounding, and retrieval. It enables agents to access structured and unstructured knowledge sources in a consistent and governed manner.
 
-- ## Enterprise Knowledge Sources  
-    Includes internal and external repositories that agents may query during task execution. These sources may contain structured data, unstructured documents, vector embeddings, or graph‑based representations. Examples include document stores, relational systems, vector databases, and knowledge graphs. These repositories provide authoritative information required for accurate grounding.
+- ## Source Bases
+    Includes internal and external repositories that agents may query during task execution. These sources may contain structured data, unstructured documents, or graph‑based representations. These repositories provide authoritative information required for accurate grounding.
 
-- ## Retrieval and Indexing Services  
-    Provides mechanisms for indexing, searching, and retrieving relevant information from knowledge sources. This may include vector search, semantic retrieval, metadata filtering, graph traversal, and hybrid search capabilities. These services ensure that agents can efficiently locate the information needed to complete a task.
-
-- ## Persistent Memory  
-    Maintains long‑term or session‑independent information that agents may reference across tasks. This may include user preferences, historical interactions, domain rules, or other durable knowledge artifacts. Persistent memory complements the short‑term memory maintained within the agent layer.
+- ## Vector DBs  
+    Provides vector based retrieval for semantic search and grounding, enabling agents to find relavent information from large text corpora.
 
 ---
 
-# LLM Gateway
+# LLM Layer
 
 The LLM Gateway provides a controlled interface for accessing approved large language models. It standardizes how agents submit inference requests, enforces model level policies, and ensures that all model interactions are governed, observable, and compliant with enterprise requirements. The gateway centralizes model registration, routing, and guardrail enforcement so that downstream agents operate within defined constraints.
 
 - ## Model Registry  
     The Model Registry maintains a catalog of approved models that agents are permitted to use. It stores model metadata, version information, configuration parameters, and usage constraints. The registry ensures that agents can only access models that meet organizational, regulatory, and security standards. It also supports lifecycle management and controlled onboarding of new models.
 
-- ## Inference Gateway  
+- ## LLM Gateway  
     The Inference Gateway is responsible for routing inference requests from the agent layer to the appropriate model. It validates incoming requests, applies routing rules, and ensures that each request is directed to the correct model instance. The gateway abstracts the complexity of model hosting and provides a consistent interface for submitting and receiving inference results.
 
 - ## Guardrails and Policies  
-    Guardrails and policies enforce operational, safety, compliance, authentication, and authorization requirements on all model interactions. This includes input validation, output filtering, access control, rate limits, and policy checks applied before and after model execution. These controls ensure that model usage remains aligned with enterprise standards and regulatory expectations.
+    This component enforces a zero-trust model for all model interactions. It handles Authentication and Authorization for every inference request. Guardrails includes input validation (to prevent prompt injection), output filtering (to redact sensitive information or block harmful content), access control, rate limits and cost management policies. These controls are applied before and after model executions to ensure that model usage remains aligned with enterprise standards and regulatory expectations.
 
 ---
 
-# MCP Gateway
+# MCP Layer
 The MCP Gateway provides a controlled interface for accessing approved MCP servers. It standardizes how agents establish MCP connections, enforces operational and policy constraints, and ensures that all interactions with MCP servers are governed and observable. The gateway centralizes server registration, routing, and guardrail enforcement so that downstream agents operate within defined boundaries.
 
 - ## MCP Server Registry
     The MCP Server Registry maintains a catalog of approved MCP servers that agents are permitted to access. It stores server metadata, capabilities, configuration details, and usage constraints. The registry ensures that agents can only connect to MCP servers that meet organizational, security, and compliance requirements. It also supports lifecycle management and controlled onboarding of new MCP servers.
 
-- ## Gateway
+- ## MCP Gateway
     The Connection Gateway is responsible for routing MCP connection requests from the agent layer to the appropriate MCP server. It validates incoming requests, applies routing rules, and ensures that each request is directed to the correct server instance. The gateway abstracts the complexity of MCP server connectivity and provides a consistent interface for establishing and managing MCP interactions.
 
 - ## Guardrails and Policies
-    Guardrails and policies enforce operational, safety, compliance, authentication, and authorization requirements on all MCP interactions. This includes request validation, access control, rate limits, and policy checks applied before and during MCP communication. These controls ensure that agent interactions with MCP servers remain aligned with enterprise standards and regulatory expectations.
+    This component enforces a zero-trust model for all tool and service interactions via the MCP protocol. It is responsible for Authentication and Authorization of every MCP request. Policies here govern which agents can use which tools, enforce rate limits and validate the parameters of tool calls. These controls ensure that agent interactions with MCP servers remain aligned with enterprise standards and regulatory expectations.
 
 ---
 
 # Evaluation Layer
-The Evaluation Layer provides continuous oversight, quality assurance, and adaptive improvement for the multi‑agent system. It ensures that agent behavior remains aligned with organizational expectations by incorporating feedback, human supervision, runtime protection, and learning signals. This layer forms a bidirectional relationship with the Agent Layer, enabling both real‑time intervention and post‑execution evaluation.
+The Evaluation Layer provides continuous oversight, quality assurance, and adaptive improvement for the multi‑agent system. It ensures that agent behavior remains aligned with organizational expectations by incorporating feedback, human supervision and runtime protection. This layer forms a bidirectional relationship with the Agent Layer, enabling both real‑time intervention and post‑execution evaluation.
 
 - ## Feedback Engine
     Collects structured and unstructured feedback from users, evaluators, and automated systems. Feedback may include correctness assessments, preference signals, quality ratings, or domain‑specific evaluation criteria. The engine aggregates these signals to inform agent behavior and system improvements.
@@ -141,18 +149,15 @@ The Evaluation Layer provides continuous oversight, quality assurance, and adapt
 - ## Runtime Protection
     Monitors agent actions and model outputs during execution to detect unsafe, non‑compliant, or anomalous behavior. Runtime protection may enforce policy constraints, block disallowed actions, or trigger escalation workflows. This ensures that agents operate within defined safety and compliance boundaries.
 
-- ## Adaptive Learning
-    Generates learning signals based on evaluation outcomes. These signals may be used to refine prompts, adjust agent configurations, update policies, or improve model selection strategies. Adaptive learning supports continuous improvement without requiring direct modification of underlying models.
-
 ---
 
 # Observability Layer
 The Observability Layer provides end‑to‑end visibility into the behavior, performance, and health of the multi‑agent system. All layers in the architecture emit signals into this layer, enabling comprehensive monitoring, diagnostics, and operational insight. Observability ensures that the system remains transparent, traceable, and auditable across all agent interactions, model inferences, knowledge retrievals, and gateway operations.
 
-- ## Logging
+- ## Logs
     Captures structured and unstructured logs from all layers, including the user interaction layer, agent gateway, agent layer, LLM gateway, MCP gateway, knowledge layer, and evaluation layer. Logging supports debugging, auditability, and historical analysis of system behavior.
 
-- ## Tracing
+- ## Traces
     Provides distributed tracing across the entire request lifecycle. Tracing links actions across layers, enabling operators to understand how a request flows through agents, gateways, models, and knowledge sources. This supports root‑cause analysis and performance optimization.
 
 - ## Metrics
