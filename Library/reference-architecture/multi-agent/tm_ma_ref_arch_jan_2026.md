@@ -30,4 +30,4 @@ This table defines the specific security controls that can be implemented to mit
 | **C20** | Ensure logs contain full cryptographic identity and rich contextual details |
 | **C21** | Implement automated response playbooks (SOAR) for high confidence alerts |
 | **C22** | Implement resource quotas and limits (CPU, Memory, Execution time) within the agent runtime environment |
-
+| **C23** | Sanitize all agent generated output to remove or neutralize malicious code before it is displayed to users or passed to other systems |
