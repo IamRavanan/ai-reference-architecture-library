@@ -53,3 +53,11 @@ This section details the threats identified in each layer of the architecture an
 | T6 | **Gateway Bypass** | An attacker bypasses the Agent Gateway to interact directly with the Agent Layer | -Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
 | T7 | **Policy Evasion** | An attacker crafts requests that evade gateway policies| - Continously update and refine policies <br>- Employ anomaly detection | C5, C13|
 
+### Agent Layer
+
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T8 | **Goal Manipulation** | An agent manipulates an agent's goal, causing harmful actions | -Isolate agent runtimes <br>- Monitor agent behavior for deviations <br>- Validate external inputs influencing goals | C1, C14, C15 |
+| T9 | **Compromise of a Supervisor Agent** | An attacker gains control of a supervisor agent, allowing them to control subordinate agents | - Enforce principle of least privilege for all agents <br>- Enforce strict runtime and network isolation <br>- Monitor inter agent communication for suspicious patterns | C11, C14, C16 |
+| T10 | **Insecure Tool Execution** | A compromised agent uses a tool to perform malicious actions| - Sandbox all tool execution <br>- Enforce strict, Just-in-Time permission for tools <br>- Monitor inter agent communication for suspicious patterns| C1, C14, C17 |
+| T11 | **Agent Resource Exhaustion** | An agent is tricked into a computationally expensive task that consumes excessive resources, starving other agents | - Implement strict resource quotas within the agent runtime <br>- Monitor resource consumption and terminate agents that exceed their limits | C15, C22 |
