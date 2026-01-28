@@ -64,25 +64,24 @@ This section details the threats identified in each layer of the architecture an
 | T9 | **Compromise of a Supervisor Agent** | An attacker gains control of a supervisor agent, allowing them to control subordinate agents | - Enforce principle of least privilege for all agents <br>- Enforce strict runtime and network isolation <br>- Monitor inter agent communication for suspicious patterns | C11, C14, C16 |
 | T10 | **Insecure Tool Execution** | A compromised agent uses a tool to perform malicious actions| - Sandbox all tool execution <br>- Enforce strict, Just-in-Time permission for tools <br>- Monitor inter agent communication for suspicious patterns| C1, C14, C17 |
 | T11 | **Agent Resource Exhaustion** | An agent is tricked into a computationally expensive task that consumes excessive resources, starving other agents | - Implement strict resource quotas within the agent runtime <br>- Monitor resource consumption and terminate agents that exceed their limits | C15, C22 |
+| T12 | **Inter Agent Compromise** | A compromised agent attempts to attack or influence other agents running in the same environment  | - Enforce strict runtime and network isolation between agents <br>- Monitor inter agent communication for anomalous patterns | C5, C11, C14 | 
 
 ### Knowledge Layer
 | Threat ID | Threat | Description | Mitigation | Control IDs |
 | --- | --- | --- | --- | --- |
-| T12 | **Data Poisoning** | An attacker injects malicious information into knowledge bases | - Implement strict access controls for data sources <br>- Scan and validate new data before ingestion | C8, C18 |
-| T13 | **Data Leakage** | An agent leaks sensitive information from the Knowledge Layer | - Enforce strict, granular access controls <br>- Use Data Loss Prevention (DLP) techniques <br>- Encrypt Data at rest | C8, C19, C24 |
+| T13 | **Data Poisoning** | An attacker injects malicious information into knowledge bases | - Implement strict access controls for data sources <br>- Scan and validate new data before ingestion | C8, C18 |
+| T14 | **Data Leakage** | An agent leaks sensitive information from the Knowledge Layer | - Enforce strict, granular access controls <br>- Use Data Loss Prevention (DLP) techniques <br>- Encrypt Data at rest | C8, C19, C24 |
 
 ### LLM Layer
 | Threat ID | Threat | Description | Mitigation | Control IDs |
 | --- | --- | --- | --- | --- |
-| T14 | **Model Theft** | An attacker gains unauthorized access and exfiltrates a proprietary language model | - Implement strict access control for the model registry <br>- Encrypt models at rest and in transit <br>- Monitor for anomalous access patterns | C5, C8, C24  | 
-| T15 | **Malicious Model Registration** | An attacker registers a malicious model in the model registry | - Implement a strict vetting and approval process for all new models <br>- Regulary scan registered models for vulnerabilities | C10, C25 | 
-| T16 | **Prompt Injection** | An attacker crafts a prompt that cause the LLM to ignore its instructions and generate harmful output | - Use an AI Firewall or specialized gateway to validate and sanitize prompts <br>- Fine tune models to be more resilient to injection attacks | C2 | 
+| T15 | **Model Theft** | An attacker gains unauthorized access and exfiltrates a proprietary language model | - Implement strict access control for the model registry <br>- Encrypt models at rest and in transit <br>- Monitor for anomalous access patterns | C5, C8, C24  | 
+| T16 | **Malicious Model Registration** | An attacker registers a malicious model in the model registry | - Implement a strict vetting and approval process for all new models <br>- Regulary scan registered models for vulnerabilities | C10, C25 | 
+| T17 | **Prompt Injection** | An attacker crafts a prompt that cause the LLM to ignore its instructions and generate harmful output | - Use an AI Firewall or specialized gateway to validate and sanitize prompts <br>- Fine tune models to be more resilient to injection attacks | C2 | 
 
 ### MCP Layer
 | Threat ID | Threat | Description | Mitigation | Control IDs |
 | --- | --- | --- | --- | --- |
-| T17 | **Compromised MCP Server** | An attacker compromises an MCP server, allowing them to intercept or manipulate data | - Enforce strong authentication and encryption for all connections <br>- Isolate MCP servers from other parts of the system <br>- Encrypt sensitive data at rest on the server | C10, C11, C12, C24 | 
-| T18 | **MCP Registry Poisoning** | An attacker compromises the MCP server registry to list malicious servers | - Implement strict access controls for the registry <br>- Maintain an immutable audit trail of all changes <br>- Regularly scan the registry for unauthorized changes | C8, C9, C10 | 
-| T19 | **MCP Gateway Bypass** | An attacker bypasses the MCP gateway to interact directly with an MCP server | - Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
-
-
+| T18 | **Compromised MCP Server** | An attacker compromises an MCP server, allowing them to intercept or manipulate data | - Enforce strong authentication and encryption for all connections <br>- Isolate MCP servers from other parts of the system <br>- Encrypt sensitive data at rest on the server | C10, C11, C12, C24 | 
+| T19 | **MCP Registry Poisoning** | An attacker compromises the MCP server registry to list malicious servers | - Implement strict access controls for the registry <br>- Maintain an immutable audit trail of all changes <br>- Regularly scan the registry for unauthorized changes | C8, C9, C10 | 
+| T20 | **MCP Gateway Bypass** | An attacker bypasses the MCP gateway to interact directly with an MCP server | - Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
