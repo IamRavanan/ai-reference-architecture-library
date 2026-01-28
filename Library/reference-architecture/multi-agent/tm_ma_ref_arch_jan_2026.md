@@ -29,4 +29,5 @@ This table defines the specific security controls that can be implemented to mit
 | **C19** | Integrate with Data Loss Prevention (DLP) solutions to scan agent outputs for sensitive data |
 | **C20** | Ensure logs contain full cryptographic identity and rich contextual details |
 | **C21** | Implement automated response playbooks (SOAR) for high confidence alerts |
+| **C22** | Implement resource quotas and limits (CPU, Memory, Execution time) within the agent runtime environment |
 
