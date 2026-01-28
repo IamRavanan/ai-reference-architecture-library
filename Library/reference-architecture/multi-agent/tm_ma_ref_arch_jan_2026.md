@@ -34,6 +34,7 @@ This table defines the specific security controls that can be implemented to mit
 | **C24** | Encrypt sensitive data, including models, both at rest and in transit |
 | **C25** | Implement a strict vetting and scanning process for all new models and components before they are registered in the platform|
 | **C26** | Enforce strict, non-bypassable workflows for tasks that require human supervision |
+| **C27** | Implement a multi source feedback engine that aggregates and weighs signals from diverese sources (explicit user rating, implicit behavior, automated evaluation) to generate a trusted score for agent interactions |
 
 ## 2. Threats and Mitigations
 
@@ -85,3 +86,10 @@ This section details the threats identified in each layer of the architecture an
 | T18 | **Compromised MCP Server** | An attacker compromises an MCP server, allowing them to intercept or manipulate data | - Enforce strong authentication and encryption for all connections <br>- Isolate MCP servers from other parts of the system <br>- Encrypt sensitive data at rest on the server | C10, C11, C12, C24 | 
 | T19 | **MCP Registry Poisoning** | An attacker compromises the MCP server registry to list malicious servers | - Implement strict access controls for the registry <br>- Maintain an immutable audit trail of all changes <br>- Regularly scan the registry for unauthorized changes | C8, C9, C10 | 
 | T20 | **MCP Gateway Bypass** | An attacker bypasses the MCP gateway to interact directly with an MCP server | - Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
+
+
+### Evaluation Layer
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T21 | **Feedback Manipulation** | An attacker provides false or misleading feedback to the feedback engine, causing the system to learn incorrect behaviors | - Implement mechanisms to verify the identity and reputation of users providing feedback <br>- Use a diverse set of feedback sources <br>- Employ anomaly detection to flag suspicious feedback | C5, C27 | 
+| T22 | **Bypassing Human Supervision** | An attacker finds a way to bypass the human supervision process for sensitive tasks | - Enforce strict, non bypassable workflows for sensitive tasks <br>- Maintain a detailed audit trail of all supervision activities | C9, C26 | 
