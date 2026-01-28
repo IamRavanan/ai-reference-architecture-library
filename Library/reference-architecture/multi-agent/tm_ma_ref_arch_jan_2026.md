@@ -1,6 +1,6 @@
 # MAESTRO Threat Model for Multi-Agent Reference Architecture
 
-This document outlines a threat model for the multi-agent reference architecture, using the MAESTRO framework. 
+This document provides a comprehensive threat model for the multi-agent reference architecture, using the MAESTRO framework. It maps 27 controls to 24 threats across 8 architectural layers
 
 ## 1. Controls Definition
 
@@ -93,3 +93,10 @@ This section details the threats identified in each layer of the architecture an
 | --- | --- | --- | --- | --- |
 | T21 | **Feedback Manipulation** | An attacker provides false or misleading feedback to the feedback engine, causing the system to learn incorrect behaviors | - Implement mechanisms to verify the identity and reputation of users providing feedback <br>- Use a diverse set of feedback sources <br>- Employ anomaly detection to flag suspicious feedback | C5, C27 | 
 | T22 | **Bypassing Human Supervision** | An attacker finds a way to bypass the human supervision process for sensitive tasks | - Enforce strict, non bypassable workflows for sensitive tasks <br>- Maintain a detailed audit trail of all supervision activities | C9, C26 | 
+
+
+### Observability Layer
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T23 | **Log Tampering** | An attacker modifies or deletes logs to hide their activities | - Use a write-only immutable logging system <br>- Ensure logs have rich context for forensics | C9, C20 | 
+| T24 | **Alert Fatigue** | The system generates a high volume of false positive alerts, causing operators to miss real events | - Fine tune alerting rules <br>- Use a correlation engine and automated responses | C21 | 
