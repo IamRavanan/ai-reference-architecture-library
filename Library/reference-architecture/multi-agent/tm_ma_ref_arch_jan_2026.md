@@ -20,7 +20,7 @@ This table defines the specific security controls that can be implemented to mit
 | **C10** | Implement automated configuration scanning to detect unauthorized changes |
 | **C11** | Use platform native network policies (Kubernetes network policies, Security groups) to enforce micro segmentation |
 | **C12** | Enforce mutual TLS (mTLS) for all connections using strong, verifiable workload identities (SPIFFE SVIDs) |
-| **C13** | Manage and version control all authorization policies as code in a version control system (Git) |
+| **C13** | Manage and version control all security policies (for authorization, content, behavior) as code in a version control system (Git) |
 | **C14** | Use sandboxing or containerization technologies to isolate agent processes and tool execution |
 | **C15** | Implement runtime monitoring to detect and alert on anomalous agent behavior or goal deviation |
 | **C16** | Ensure child agents are created with a scoped, delegated workload identity and a subset of the parent's permissions |
@@ -36,7 +36,7 @@ This table defines the specific security controls that can be implemented to mit
 
 This section details the threats identified in each layer of the architecture and maps them to the controls defined above.
 
-## User Interaction Layer
+### User Interaction Layer
 
 | Threat ID | Threat | Description | Mitigation | Control IDs |
 | --- | --- | --- | --- | --- |
@@ -45,4 +45,11 @@ This section details the threats identified in each layer of the architecture an
 | T3 | **Denial of Service (DoS)** | A malicious user floods the application with a high volume of requests, overwhelming the system | - Use network layer DDoS protection for volumetric attacks <br>- Use a WAF for application layer attacks <br>- Implement rate limiting | C6, C7 |
 | T4 | **Insecure Output Generation** | An agent generates output that is either malicious or contains sensitive data that should not be exposed| - Sanitize all agent output for malicious code before rendering <br>- Scan all agent output for sensitive data using DLP | C19, C23 |
 
+### Agent Gateway Layer
+
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T5 | **Agent Registry Poisoning** | An attacker compromises the Agent registry to list malicious agents | - Implement strict access controls <br>- Maintain an immutable audit trail <br>- Regularly scan the registry | C8, C9, C10 |
+| T6 | **Gateway Bypass** | An attacker bypasses the Agent Gateway to interact directly with the Agent Layer | -Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
+| T7 | **Policy Evasion** | An attacker crafts requests that evade gateway policies| - Continously update and refine policies <br>- Employ anomaly detection | C5, C13|
 
