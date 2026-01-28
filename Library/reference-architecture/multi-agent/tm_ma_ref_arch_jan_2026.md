@@ -31,6 +31,9 @@ This table defines the specific security controls that can be implemented to mit
 | **C21** | Implement automated response playbooks (SOAR) for high confidence alerts |
 | **C22** | Implement resource quotas and limits (CPU, Memory, Execution time) within the agent runtime environment |
 | **C23** | Sanitize all agent generated output to remove or neutralize malicious code before it is displayed to users or passed to other systems |
+| **C24** | Encrypt sensitive data, including models, both at rest and in transit |
+| **C25** | Implement a strict vetting and scanning process for all new models and components before they are registered in the platform|
+| **C26** | Enforce strict, non-bypassable workflows for tasks that require human supervision |
 
 ## 2. Threats and Mitigations
 
@@ -67,4 +70,6 @@ This section details the threats identified in each layer of the architecture an
 | --- | --- | --- | --- | --- |
 | T12 | **Data Poisoning** | An attacker injects malicious information into knowledge bases | - Implement strict access controls for data sources <br>- Scan and validate new data before ingestion | C8, C18 |
 | T13 | **Data Leakage** | An agent leaks sensitive information from the Knowledge Layer | - Enforce strict, granular access controls <br>- Use Data Loss Prevention (DLP) techniques | C8, C19 |
+
+
 
