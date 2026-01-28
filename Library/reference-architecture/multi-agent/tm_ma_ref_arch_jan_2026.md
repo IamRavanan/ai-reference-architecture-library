@@ -2,6 +2,18 @@
 
 This document provides a comprehensive threat model for the multi-agent reference architecture, using the MAESTRO framework. It maps 27 controls to 24 threats across 8 architectural layers
 
+## Table of Contents
+- [1. Controls Definition](#1-controls-definition)
+- [2. Threats & Mitigations](#2-threats-and-mitigations)
+    - [User Interaction Layer](#user-interaction-layer)
+    - [Agent Gateway Layer](#agent-gateway-layer)
+    - [Agent Layer](#agent-layer)
+    - [Knowledge Layer](#knowledge-layer)
+    - [LLM Layer](#llm-layer)
+    - [MCP Layer](#mcp-layer)
+    - [Evaluation Layer](#evaluation-layer)
+    - [Observability Layer](#observability-layer)
+
 ## 1. Controls Definition
 
 This table defines the specific security controls that can be implemented to mitigate threats.
