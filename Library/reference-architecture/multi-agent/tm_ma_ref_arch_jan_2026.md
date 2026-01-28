@@ -31,3 +31,18 @@ This table defines the specific security controls that can be implemented to mit
 | **C21** | Implement automated response playbooks (SOAR) for high confidence alerts |
 | **C22** | Implement resource quotas and limits (CPU, Memory, Execution time) within the agent runtime environment |
 | **C23** | Sanitize all agent generated output to remove or neutralize malicious code before it is displayed to users or passed to other systems |
+
+## 2. Threats and Mitigations
+
+This section details the threats identified in each layer of the architecture and maps them to the controls defined above.
+
+## User Interaction Layer
+
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T1 | **Malicious User Input** | A user intentionally provides malicious input to exploit the system, such as prompt injection, jailbreaking, or attempts to cause harmful actions. | - Implemet robust input validation and sanitization <br>- Use gateway policies to filter content <br>- Employ Human-in-the-loop (HITL) | C1, C2, C3 |
+| T2 | **User Impersonation** | An attacker impersonates a legitimate user to gain unauthorized access | - Enforce Strong authentication <br>- Monitor for anomalous user behavior | C4, C5 |
+| T3 | **Denial of Service (DoS)** | A malicious user floods the application with a high volume of requests, overwhelming the system | - Use network layer DDoS protection for volumetric attacks <br>- Use a WAF for application layer attacks <br>- Implement rate limiting | C6, C7 |
+| T4 | **Insecure Output Generation** | An agent generates output that is either malicious or contains sensitive data that should not be exposed| - Sanitize all agent output for malicious code before rendering <br>- Scan all agent output for sensitive data using DLP | C19, C23 |
+
+
