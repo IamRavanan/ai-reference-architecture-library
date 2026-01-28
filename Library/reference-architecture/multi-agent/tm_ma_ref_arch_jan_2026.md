@@ -78,3 +78,11 @@ This section details the threats identified in each layer of the architecture an
 | T15 | **Malicious Model Registration** | An attacker registers a malicious model in the model registry | - Implement a strict vetting and approval process for all new models <br>- Regulary scan registered models for vulnerabilities | C10, C25 | 
 | T16 | **Prompt Injection** | An attacker crafts a prompt that cause the LLM to ignore its instructions and generate harmful output | - Use an AI Firewall or specialized gateway to validate and sanitize prompts <br>- Fine tune models to be more resilient to injection attacks | C2 | 
 
+### MCP Layer
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T17 | **Compromised MCP Server** | An attacker compromises an MCP server, allowing them to intercept or manipulate data | - Enforce strong authentication and encryption for all connections <br>- Isolate MCP servers from other parts of the system <br>- Encrypt sensitive data at rest on the server | C10, C11, C12, C24 | 
+| T18 | **MCP Registry Poisoning** | An attacker compromises the MCP server registry to list malicious servers | - Implement strict access controls for the registry <br>- Maintain an immutable audit trail of all changes <br>- Regularly scan the registry for unauthorized changes | C8, C9, C10 | 
+| T19 | **MCP Gateway Bypass** | An attacker bypasses the MCP gateway to interact directly with an MCP server | - Implement a zero trust network architecture <br>- Use mTLS for all internal communication | C11, C12 |
+
+
