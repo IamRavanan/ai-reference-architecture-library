@@ -69,7 +69,12 @@ This section details the threats identified in each layer of the architecture an
 | Threat ID | Threat | Description | Mitigation | Control IDs |
 | --- | --- | --- | --- | --- |
 | T12 | **Data Poisoning** | An attacker injects malicious information into knowledge bases | - Implement strict access controls for data sources <br>- Scan and validate new data before ingestion | C8, C18 |
-| T13 | **Data Leakage** | An agent leaks sensitive information from the Knowledge Layer | - Enforce strict, granular access controls <br>- Use Data Loss Prevention (DLP) techniques | C8, C19 |
+| T13 | **Data Leakage** | An agent leaks sensitive information from the Knowledge Layer | - Enforce strict, granular access controls <br>- Use Data Loss Prevention (DLP) techniques <br>- Encrypt Data at rest | C8, C19, C24 |
 
-
+### LLM Layer
+| Threat ID | Threat | Description | Mitigation | Control IDs |
+| --- | --- | --- | --- | --- |
+| T14 | **Model Theft** | An attacker gains unauthorized access and exfiltrates a proprietary language model | - Implement strict access control for the model registry <br>- Encrypt models at rest and in transit <br>- Monitor for anomalous access patterns | C5, C8, C24  | 
+| T15 | **Malicious Model Registration** | An attacker registers a malicious model in the model registry | - Implement a strict vetting and approval process for all new models <br>- Regulary scan registered models for vulnerabilities | C10, C25 | 
+| T16 | **Prompt Injection** | An attacker crafts a prompt that cause the LLM to ignore its instructions and generate harmful output | - Use an AI Firewall or specialized gateway to validate and sanitize prompts <br>- Fine tune models to be more resilient to injection attacks | C2 | 
 
