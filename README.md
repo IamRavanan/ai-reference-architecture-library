@@ -41,6 +41,13 @@ Identify and document:
 
 Any actual design work will begin in **January 2026**.
 
+## Maintainers
+
+| Name              | GitHub Handle  | Organization |
+| ------------------ | -------------- | ------------- |
+| Francesco Beltramini      | @d1gital-f    | ControlPlane     |
+| Naresh  deenadayalan   | @IamRavanan    | RBC     |     
+
 ## Contributing
 
 **All commits** must be signed with a DCO signature to avoid being flagged by the DCO Bot. This means that your commit log message must contain a line that looks like the following one, with your actual name and email address:
