@@ -46,7 +46,7 @@ Any actual design work will begin in **January 2026**.
 | Name              | GitHub Handle  | Organization |
 | ------------------ | -------------- | ------------- |
 | Francesco Beltramini      | @d1gital-f    | ControlPlane     |
-| Naresh  deenadayalan   | @IamRavanan    | RBC     |     
+| Naresh Babu Deenadayalan   | @IamRavanan    | RBC     |     
 
 ## Contributing
 
