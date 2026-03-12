@@ -24,7 +24,7 @@ This document defines a taxonomy of agent autonomy levels for AI systems deploye
 |:---|:---|:---|:---|:---|:---|:---|
 | **A0** | No Agency | Executes all actions | None | No memory | No | Minimal |
 | **A1** | Tool-Calling Agent | Approves every action | Single-step, approved tools only | Session only | No | Low |
-| **A2** | Autonomous Agent | Reviews at checkpoints | Fixed, pre-approved action list | Session and limited persistence | No | Moderate |
+| **A2** | Workflow / Playbook Agent | Reviews at checkpoints | Fixed, pre-approved action list | Session and limited persistence | No | Moderate |
 | **A3** | Goal-Directed Agent | Sets objective, reviews at milestones | Dynamic within approved limits | Persistent, cross-session | Yes, pre-approved registered agents only | High |
 | **A4** | Self-Directing Agent | Sets objective, receives exception alerts | Self-determined within policy bounds | Persistent, self-managed | Yes, including dynamic creation and retirement of agents | Critical |
 
