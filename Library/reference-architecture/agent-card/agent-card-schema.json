@@ -1,0 +1,835 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.org/schemas/fsi-agent-card/v1.0.0",
+  "title": "FSI Agent Card",
+  "description": "An extended Agent Card schema for AI agents deployed within financial institutions. It grounds the A2A Agent Card standard in the governance, regulatory compliance, and risk management requirements of the financial services industry.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "name",
+    "description",
+    "url",
+    "version",
+    "provider",
+    "capabilities",
+    "defaultInputModes",
+    "defaultOutputModes",
+    "securitySchemes",
+    "skills",
+    "governance",
+    "dataHandling",
+    "compliance",
+    "agentSecurity"
+  ],
+  "properties": {
+
+    "schemaVersion": {
+      "type": "string",
+      "description": "Version of the FSI Agent Card schema. This is the schema version, not the agent version. Use semantic versioning (e.g. '1.0.0')."
+    },
+
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name of the agent."
+    },
+
+    "description": {
+      "type": "string",
+      "description": "Description of the agent's purpose, scope, and intended function within the institution. Include what the agent does not do as well as what it does."
+    },
+
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Primary A2A endpoint URL for the agent. Must use HTTPS in all production deployments."
+    },
+
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the agent software (e.g. '2.3.1')."
+    },
+
+    "documentationUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the agent's internal documentation or runbook."
+    },
+
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when this Agent Card was last updated. This field is an audit artefact and must be kept current on every change."
+    },
+
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Keywords for agent discovery and categorisation (e.g. 'kyc', 'reconciliation', 'fraud-detection')."
+    },
+
+    "provider": {
+      "type": "object",
+      "description": "The team or organisation accountable for this agent.",
+      "required": ["name", "businessLine", "department", "businessOwner", "teamContact"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the providing organisation or internal team."
+        },
+        "businessLine": {
+          "type": "string",
+          "description": "The business line that owns this agent (e.g. 'Markets / Fixed Income', 'Retail Banking', 'Risk Management')."
+        },
+        "department": {
+          "type": "string",
+          "description": "The specific department or team that operates this agent (e.g. 'Trade Operations', 'Compliance Technology')."
+        },
+        "businessOwner": {
+          "type": "object",
+          "description": "The named individual accountable for this agent. Required by SR 11-7 and equivalent model risk frameworks.",
+          "required": ["name", "email"],
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "role": { "type": "string", "description": "Job title of the business owner." }
+          }
+        },
+        "teamContact": {
+          "type": "string",
+          "description": "Team inbox or service desk address for operational support. Must be a shared address, not an individual's personal email."
+        }
+      }
+    },
+
+    "capabilities": {
+      "type": "object",
+      "description": "Declares the A2A protocol capabilities this agent supports. Field names and semantics are defined by the A2A Protocol specification.",
+      "required": ["a2aVersion"],
+      "properties": {
+        "a2aVersion": {
+          "type": "string",
+          "description": "Version of the A2A protocol supported (e.g. '1.0')."
+        },
+        "streaming": {
+          "type": "boolean",
+          "description": "Whether the agent supports Server-Sent Events (SSE) streaming."
+        },
+        "pushNotifications": {
+          "type": "boolean",
+          "description": "Whether the agent supports push notifications to a client-provided webhook for long-running tasks."
+        },
+        "stateTransitionHistory": {
+          "type": "boolean",
+          "description": "Whether the agent exposes task state transition history to callers."
+        }
+      }
+    },
+
+    "defaultInputModes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Default MIME types accepted as input (e.g. ['application/json', 'text/plain'])."
+    },
+
+    "defaultOutputModes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Default MIME types produced as output."
+    },
+
+    "securitySchemes": {
+      "type": "object",
+      "description": "Authentication schemes supported by this agent. This field is defined by the A2A Protocol specification and mirrors the OpenAPI 3.0 Security Scheme Object (https://spec.openapis.org/oas/v3.0.3#security-scheme-object). The structure, field names, and permitted values are reproduced verbatim from that standard and must not be modified by FSI extensions. Each key is a scheme identifier; each value is a SecurityScheme object.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["apiKey", "http", "oauth2", "openIdConnect", "mutualTLS"],
+            "description": "The type of security scheme. Permitted values are defined by OpenAPI 3.0."
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "description": "Required for type 'apiKey'. The name of the header, query, or cookie parameter."
+          },
+          "in": {
+            "type": "string",
+            "enum": ["query", "header", "cookie"],
+            "description": "Required for type 'apiKey'. The location of the API key."
+          },
+          "scheme": {
+            "type": "string",
+            "description": "Required for type 'http'. The HTTP authentication scheme name (e.g. 'bearer', 'basic')."
+          },
+          "bearerFormat": {
+            "type": "string",
+            "description": "Optional for type 'http' with scheme 'bearer'. A hint to the client identifying the bearer token format (e.g. 'JWT')."
+          },
+          "flows": {
+            "type": "object",
+            "description": "Required for type 'oauth2'. The OAuth Flows Object as defined in OpenAPI 3.0."
+          },
+          "openIdConnectUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Required for type 'openIdConnect'. URL to the OpenID Connect discovery document."
+          }
+        }
+      }
+    },
+
+    "security": {
+      "type": "array",
+      "description": "Declares which securitySchemes are required to call this agent. Mirrors the OpenAPI 3.0 Security Requirement Object. Each entry maps a scheme identifier to its required OAuth scopes (empty array for non-OAuth schemes).",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "skills": {
+      "type": "array",
+      "description": "The discrete, auditable capabilities this agent can perform. Each skill should map to a single, well-bounded operation with clear side-effect declarations.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this skill within the agent."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable skill name."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this skill does and what it does not do. Include constraints, preconditions, and side-effect declarations."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Searchable labels for discovery and categorisation."
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Example prompts or inputs illustrating how this skill is invoked."
+          },
+          "inputModes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Overrides defaultInputModes for this skill only."
+          },
+          "outputModes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Overrides defaultOutputModes for this skill only."
+          },
+          "requiresHumanApproval": {
+            "type": "boolean",
+            "description": "Must be true for any skill that writes to an external system or causes an externally observable state change. Declaring this in the Agent Card makes the oversight requirement machine-readable."
+          },
+          "specReference": {
+            "type": "string",
+            "description": "Reference to the skill specification. May be a URL, a document ID, an OpenAPI path reference, or an internal system reference."
+          }
+        }
+      }
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Oversight and risk management metadata. Addresses SR 11-7, EU AI Act Articles 9 and 14, and equivalent model risk frameworks.",
+      "required": [
+        "autonomyLevel",
+        "modelRiskTier",
+        "humanOversightModel",
+        "escalationContacts"
+      ],
+      "properties": {
+
+        "autonomyLevel": {
+          "type": "string",
+          "enum": ["A0", "A1", "A2", "A3", "A4"],
+          "description": "Agent autonomy level from the FINOS AI Reference Architecture taxonomy (https://github.com/finos-labs/ai-reference-architecture-library). A0 = No Agency through A4 = Self-Directing Agent. This is a design decision enforced by the surrounding system, not an intrinsic property of the underlying model."
+        },
+
+        "autonomyLevelJustification": {
+          "type": "string",
+          "description": "A reasoned explanation of why this autonomy level was assigned, identifying the specific constraints in the implementation that enforce it, and describing how human oversight is implemented and enforced in this deployment. Address both the reasoning behind the classification and the mechanics of the oversight model. A restatement of the level name or oversight model name is not acceptable."
+        },
+
+        "modelRiskTier": {
+          "type": "string",
+          "enum": ["Minimal", "Low", "Moderate", "High", "Critical"],
+          "description": "Model risk tier consistent with the firm's model risk framework and SR 11-7 expectations. Determines the validation, monitoring, and change management intensity required for this agent."
+        },
+
+        "humanOversightModel": {
+          "type": "string",
+          "enum": [
+            "human-executes-all-actions",
+            "human-approves-every-action",
+            "human-reviews-at-checkpoints",
+            "human-reviews-at-milestones",
+            "human-receives-exception-alerts-only"
+          ],
+          "description": "The human oversight pattern in effect for this agent. Must be consistent with the assigned autonomyLevel. See the README for the required mapping."
+        },
+
+        "approvedActionList": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicit enumeration of every action this agent is permitted to take. Any action absent from this list must trigger escalation, not execution. Required for A2 and above."
+        },
+
+        "approvedAgentRegistry": {
+          "type": "array",
+          "description": "Pre-approved agents this agent may delegate tasks to. An agent not on this list must not be invoked. Required for A3 and above.",
+          "items": {
+            "type": "object",
+            "required": ["agentId", "name", "approvalReference"],
+            "properties": {
+              "agentId": { "type": "string" },
+              "name": { "type": "string" },
+              "approvalReference": {
+                "type": "string",
+                "description": "Reference to the formal approval record for this delegation (e.g. a change ticket or governance review ID)."
+              }
+            }
+          }
+        },
+
+        "escalationContacts": {
+          "type": "array",
+          "description": "Ordered list of contacts for escalation when the agent encounters a situation outside its permitted scope. List from first responder to senior escalation. Vague or incomplete escalation paths are a governance control failure.",
+          "items": {
+            "type": "object",
+            "required": ["name", "email", "role"],
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string", "format": "email" },
+              "role": { "type": "string" },
+              "escalationTriggers": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Specific conditions that trigger escalation to this contact."
+              }
+            }
+          }
+        },
+
+        "changeApprovalReference": {
+          "type": "string",
+          "description": "The change management ticket or approval reference for the current deployed version of this agent."
+        },
+
+        "modelRisk": {
+          "type": "object",
+          "description": "Model risk management records. These fields are owned by the model validation team, not the development team. Required for SR 11-7 compliance. The agent card captures the current state; the model inventory holds the full history.",
+          "properties": {
+            "modelInventoryId": {
+              "type": "string",
+              "description": "The unique identifier for this agent in the firm's model inventory. Must be populated before the agent is deployed to production."
+            },
+            "lastValidationDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date on which the most recent model validation review was completed by the model risk team."
+            },
+            "nextReviewDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Scheduled date for the next periodic model review."
+            }
+          }
+        }
+      }
+    },
+
+    "dataHandling": {
+      "type": "object",
+      "description": "Data classification, residency, and retention requirements. Supports GDPR Article 30 (records of processing), data sovereignty obligations, and least-privilege access enforcement.",
+      "required": ["dataClassification", "permittedDataDomains", "dataResidency"],
+      "properties": {
+
+        "dataClassification": {
+          "type": "string",
+          "enum": ["Public", "Internal", "Confidential", "Restricted"],
+          "description": "The highest data classification level this agent is authorised to process. Drives access control and encryption requirements."
+        },
+
+        "permittedDataDomains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "PII",
+              "MNPI",
+              "TradeData",
+              "MarketData",
+              "CustomerFinancials",
+              "RegulatoryReporting",
+              "KYC_AML",
+              "CreditRisk",
+              "OperationalRisk",
+              "InternalAudit",
+              "HRData",
+              "PublicData"
+            ]
+          },
+          "description": "Data domains this agent is authorised to access. Any domain not listed here must not be accessed. Listing PII requires completing the piiHandling object."
+        },
+
+        "dataResidency": {
+          "type": "object",
+          "description": "Geographic constraints on where this agent's data may be processed and stored.",
+          "required": ["permittedRegions"],
+          "properties": {
+            "permittedRegions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "ISO 3166-1 alpha-2 country codes identifying the regions where data may reside (e.g. ['US', 'GB'])."
+            },
+            "restrictedRegions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "ISO 3166-1 alpha-2 codes for regions explicitly prohibited from processing or storing this agent's data."
+            }
+          }
+        },
+
+        "retentionPolicy": {
+          "type": "object",
+          "description": "Retention periods for inputs and outputs produced and consumed by this agent. Audit log retention is declared separately in compliance.auditTrail.retentionDays.",
+          "properties": {
+            "inputRetentionDays": {
+              "type": "integer",
+              "description": "Number of days that agent inputs must be retained."
+            },
+            "outputRetentionDays": {
+              "type": "integer",
+              "description": "Number of days that agent outputs must be retained."
+            },
+            "policyReference": {
+              "type": "string",
+              "description": "Reference to the applicable data retention policy document or internal policy ID."
+            }
+          }
+        },
+
+        "piiHandling": {
+          "type": "object",
+          "description": "Required when PII is listed in permittedDataDomains. Documents the legal basis for processing personal data under GDPR Article 6.",
+          "required": ["piiTypesHandled", "legalBasis"],
+          "properties": {
+            "piiTypesHandled": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Categories of personal data this agent processes (e.g. 'full_name', 'account_number', 'national_id', 'email_address')."
+            },
+            "legalBasis": {
+              "type": "string",
+              "enum": [
+                "Consent",
+                "Contract",
+                "Legal Obligation",
+                "Vital Interests",
+                "Public Task",
+                "Legitimate Interests"
+              ],
+              "description": "Legal basis for processing personal data under GDPR Article 6."
+            }
+          }
+        }
+      }
+    },
+
+    "compliance": {
+      "type": "object",
+      "description": "Applicable regulatory frameworks, audit controls, explainability, and incident response declarations.",
+      "required": ["applicableRegulations", "auditTrail", "incidentResponse"],
+      "properties": {
+
+        "applicableRegulations": {
+          "type": "array",
+          "description": "Regulatory frameworks and internal policies this agent must comply with. Each entry names the regulation, states the specific provisions that apply, and identifies the compliance owner.",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Regulation or policy name (e.g. 'SR 11-7', 'EU AI Act', 'MAS TRM', 'DORA', 'GDPR', 'FCA Consumer Duty', 'MiFID II')."
+              },
+              "applicability": {
+                "type": "string",
+                "description": "The specific articles, sections, or requirements of this regulation that apply to this agent."
+              },
+              "complianceOwner": {
+                "type": "string",
+                "description": "Team or individual responsible for compliance with this regulation."
+              }
+            }
+          }
+        },
+
+        "auditTrail": {
+          "type": "object",
+          "description": "Audit logging declaration. All agents at A1 and above must produce an immutable audit trail. The Agent Card declares the posture; the referenced specification holds the event-level detail.",
+          "required": ["enabled", "immutable"],
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether audit logging is active for this agent."
+            },
+            "immutable": {
+              "type": "boolean",
+              "description": "Whether audit logs are write-once and tamper-evident. Must be true for A1 and above."
+            },
+            "retentionDays": {
+              "type": "integer",
+              "description": "Number of days that audit logs must be retained. Declared here rather than in dataHandling.retentionPolicy because audit log retention is a compliance obligation, not a data management decision."
+            },
+            "reference": {
+              "type": "string",
+              "description": "Reference to the audit logging specification for this agent. May be a URL, a document ID, or an internal system reference."
+            }
+          }
+        },
+
+        "explainability": {
+          "type": "object",
+          "description": "Explainability posture required under SR 11-7, EU AI Act Article 13, and equivalent frameworks.",
+          "required": ["supported"],
+          "properties": {
+            "supported": {
+              "type": "boolean",
+              "description": "Whether the agent can produce a human-readable explanation of its decisions on request."
+            },
+            "method": {
+              "type": "string",
+              "description": "The method used to produce explanations (e.g. 'chain-of-thought logging', 'SHAP', 'LIME', 'rule-based trace')."
+            }
+          }
+        },
+
+        "incidentResponse": {
+          "type": "object",
+          "description": "Emergency controls and incident reporting contacts for this agent.",
+          "required": ["incidentContactEmail", "planReference"],
+          "properties": {
+            "killSwitchEndpoint": {
+              "type": "string",
+              "format": "uri",
+              "description": "An externally accessible endpoint that immediately halts the agent. Required for A3 and above. Must be independent of the agent process and not disableable by the agent itself."
+            },
+            "incidentContactEmail": {
+              "type": "string",
+              "format": "email",
+              "description": "Team inbox for reporting agent incidents."
+            },
+            "planReference": {
+              "type": "string",
+              "description": "Reference to the incident response plan for this agent. May be a document ID, URL, or internal system reference."
+            }
+          }
+        }
+      }
+    },
+
+    "agentSecurity": {
+      "type": "object",
+      "description": "Operational security posture of this agent. These fields address the OWASP LLM Top 10 and FSI-specific controls for agentic AI systems. The compliance block captures regulatory obligations; this block captures how the agent is secured in practice.",
+      "required": [
+        "cardSigning",
+        "promptInjectionControls",
+        "inputOutputValidation",
+        "networkAccessControl",
+        "rateLimiting"
+      ],
+      "properties": {
+
+        "cardSigning": {
+          "type": "object",
+          "description": "Agent Card integrity controls. A signed Agent Card allows callers to verify the card has not been tampered with in transit and originates from a trusted source. Addresses supply chain integrity and OWASP LLM09.",
+          "required": ["signed"],
+          "properties": {
+            "signed": {
+              "type": "boolean",
+              "description": "Whether this Agent Card is digitally signed using JSON Web Signature (JWS) per RFC 7515."
+            },
+            "jwksUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL of the JSON Web Key Set used to verify the card signature."
+            }
+          }
+        },
+
+        "promptInjectionControls": {
+          "type": "object",
+          "description": "Controls against prompt injection attacks (OWASP LLM01). Any agent that processes external data, documents, counterparty messages, or tool outputs is exposed to this risk and must declare its controls.",
+          "required": ["controlsInPlace"],
+          "properties": {
+            "controlsInPlace": {
+              "type": "boolean",
+              "description": "Whether prompt injection controls are active for this agent."
+            },
+            "reference": {
+              "type": "string",
+              "description": "Reference to the prompt injection control specification or security test evidence."
+            }
+          }
+        },
+
+        "inputOutputValidation": {
+          "type": "object",
+          "description": "Input and output validation posture. Unvalidated inputs passed to tools or downstream systems are a direct path to data exfiltration, injection attacks, and unintended state mutation (OWASP LLM02).",
+          "required": ["inputValidationEnabled", "outputValidationEnabled"],
+          "properties": {
+            "inputValidationEnabled": {
+              "type": "boolean",
+              "description": "Whether all inputs to this agent are validated before processing."
+            },
+            "outputValidationEnabled": {
+              "type": "boolean",
+              "description": "Whether all outputs from this agent are validated before being passed to callers or downstream systems."
+            },
+            "reference": {
+              "type": "string",
+              "description": "Reference to the validation specification or schema."
+            }
+          }
+        },
+
+        "networkAccessControl": {
+          "type": "object",
+          "description": "Network-level access restrictions for this agent's endpoint. In FSI deployments, public internet exposure of agent endpoints represents a material risk.",
+          "required": ["accessPolicy"],
+          "properties": {
+            "accessPolicy": {
+              "type": "string",
+              "enum": [
+                "private-network-only",
+                "vpn-required",
+                "ip-allowlist",
+                "public-with-authentication"
+              ],
+              "description": "The network access policy governing which networks can reach this agent's endpoint."
+            },
+            "reference": {
+              "type": "string",
+              "description": "Reference to the network access control specification or firewall rule set."
+            }
+          }
+        },
+
+        "agentIdentityVerification": {
+          "type": "object",
+          "description": "How this agent and its callers mutually verify identity. Prevents agent impersonation in multi-agent systems. Particularly important at A3 and above where agents delegate tasks to other agents (OWASP LLM08).",
+          "properties": {
+            "mutualAuthenticationEnabled": {
+              "type": "boolean",
+              "description": "Whether mutual TLS or an equivalent mechanism is in use for agent-to-agent calls."
+            },
+            "trustModel": {
+              "type": "string",
+              "description": "Description of the trust model in use (e.g. 'internal PKI with mTLS', 'OAuth2 client credentials per agent identity', 'signed Agent Card verification per RFC 7515')."
+            }
+          }
+        },
+
+        "rateLimiting": {
+          "type": "object",
+          "description": "Rate limiting and abuse controls for this agent's endpoint. Agents at A2 and above may be called programmatically by other agents. Without rate limiting, a compromised or misconfigured orchestrator can exhaust downstream agent capacity.",
+          "required": ["enabled"],
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether rate limiting is active on this agent's endpoint."
+            },
+            "reference": {
+              "type": "string",
+              "description": "Reference to the rate limiting configuration or policy document."
+            }
+          }
+        }
+      }
+    },
+
+    "dependencies": {
+      "type": "object",
+      "description": "Declares every external system, protocol, and capability package this agent depends on at runtime. Each dependency is a trust boundary, an attack surface, and potentially a third-party risk obligation under DORA, SR 11-7, and OWASP LLM Top 10. Declaring dependencies explicitly is a prerequisite for accurate risk assessment, supply chain integrity verification, and least-privilege enforcement.",
+      "properties": {
+
+        "mcpServers": {
+          "type": "array",
+          "description": "Model Context Protocol servers this agent connects to. Each entry represents a tool boundary through which the agent can read data, write to systems, or invoke external APIs. MCP connections are a direct prompt injection surface (OWASP LLM01), a supply chain risk (OWASP LLM03), and a potential excessive agency vector (OWASP LLM08). Third-party MCP servers require a vendor risk assessment under DORA Article 28.",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "transport", "providerType", "permittedDataDomains", "approvalReference"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for this MCP server dependency within this agent card."
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable name of the MCP server (e.g. 'Internal Trade Book MCP', 'Bloomberg Data MCP')."
+              },
+              "transport": {
+                "type": "string",
+                "enum": ["stdio", "sse", "http"],
+                "description": "The MCP transport mechanism in use. Defined by the MCP specification (https://modelcontextprotocol.io/)."
+              },
+              "endpoint": {
+                "type": "string",
+                "format": "uri",
+                "description": "The MCP server endpoint URL. Required for sse and http transports. Omitted for stdio."
+              },
+              "providerType": {
+                "type": "string",
+                "enum": ["internal", "third-party"],
+                "description": "Whether this MCP server is operated by the institution or by an external vendor. Third-party servers require a vendor risk assessment reference."
+              },
+              "vendor": {
+                "type": "string",
+                "description": "Name of the external vendor. Required when providerType is 'third-party'."
+              },
+              "permittedDataDomains": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "PII", "MNPI", "TradeData", "MarketData", "CustomerFinancials",
+                    "RegulatoryReporting", "KYC_AML", "CreditRisk", "OperationalRisk",
+                    "InternalAudit", "HRData", "PublicData"
+                  ]
+                },
+                "description": "The data domains this agent is permitted to pass to or receive from this MCP server. Must be a subset of dataHandling.permittedDataDomains. This enforces least-privilege at the connection level, not just the agent level."
+              },
+              "approvalReference": {
+                "type": "string",
+                "description": "Reference to the formal approval record for this MCP server connection. For third-party servers, this must reference a vendor risk assessment. For internal servers, a change ticket or architecture review reference is sufficient."
+              },
+              "securityReviewReference": {
+                "type": "string",
+                "description": "Reference to the security review conducted for this MCP server. Particularly important for third-party servers where the tool implementation cannot be inspected directly."
+              }
+            }
+          }
+        },
+
+        "agentSkills": {
+          "type": "array",
+          "description": "Agent Skills packages installed on this agent. Agent Skills is an emerging open standard introduced by Anthropic, comparable in concept to MCP but for packaged, reusable agent workflows rather than tool connections. Each skill is a folder of instructions, scripts, and resources that the agent loads dynamically. Skills that contain executable code run with the agent's permissions and are therefore a configuration control item, not merely a capability declaration. Malicious or modified skill files can introduce unauthorised instructions. Install only from trusted sources and require a security review for any skill not produced internally.",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "source", "containsExecutableCode", "approvalReference"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for this skill within this agent card."
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable name of the Agent Skill package."
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the skill package installed. Pin to a specific version in production; do not use floating version references."
+              },
+              "source": {
+                "type": "string",
+                "enum": ["internal", "anthropic-marketplace", "third-party"],
+                "description": "Origin of the skill package. Internal skills are produced and maintained by the institution. Anthropic marketplace skills are published by Anthropic or verified partners. Third-party skills require the most rigorous review."
+              },
+              "containsExecutableCode": {
+                "type": "boolean",
+                "description": "Whether this skill includes scripts or code that executes with the agent's permissions. Must be true if the skill contains any .py, .js, .sh, or equivalent files. Skills containing executable code carry materially higher supply chain risk."
+              },
+              "permittedDataDomains": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "PII", "MNPI", "TradeData", "MarketData", "CustomerFinancials",
+                    "RegulatoryReporting", "KYC_AML", "CreditRisk", "OperationalRisk",
+                    "InternalAudit", "HRData", "PublicData"
+                  ]
+                },
+                "description": "The data domains this skill is permitted to access. Must be a subset of dataHandling.permittedDataDomains."
+              },
+              "approvalReference": {
+                "type": "string",
+                "description": "Reference to the formal approval record for installing this skill. Required for all skill sources. For third-party skills, this must reference a security review."
+              },
+              "securityReviewReference": {
+                "type": "string",
+                "description": "Reference to the security review conducted before installation. Required for third-party skills and recommended for any skill containing executable code, regardless of source."
+              },
+              "skillCardReference": {
+                "type": "string",
+                "description": "Reference to the skill's own SKILL.md or specification document, where one exists."
+              }
+            }
+          }
+        },
+
+        "additionalProtocols": {
+          "type": "array",
+          "description": "Protocols used by this agent beyond A2A and MCP. This field is intentionally extensible to accommodate protocols that do not yet exist at the time of schema publication. Each entry declares the protocol name, version, and a reference to the integration specification so that future protocols can be governed without requiring schema changes.",
+          "items": {
+            "type": "object",
+            "required": ["name", "version", "role", "approvalReference"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the protocol (e.g. 'ANP', 'ACP', 'agntcy', or a future standard)."
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the protocol in use."
+              },
+              "role": {
+                "type": "string",
+                "enum": ["client", "server", "both"],
+                "description": "Whether this agent acts as a client, a server, or both under this protocol."
+              },
+              "specificationUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the protocol specification. This is the public protocol specification, not a secret."
+              },
+              "approvalReference": {
+                "type": "string",
+                "description": "Reference to the formal approval record for adopting this protocol."
+              },
+              "integrationReference": {
+                "type": "string",
+                "description": "Reference to the institution's integration specification for this protocol."
+              }
+            }
+          }
+        }
+
+      }
+    },
+
+    "extensions": {
+      "type": "object",
+      "description": "Institution-specific extensions to the FSI Agent Card. Any fields not defined in the core schema belong here. This block is intentionally free-form to allow individual institutions to extend the schema without modifying the core. See the README for a catalogue of suggested extension fields by category.",
+      "additionalProperties": true
+    }
+
+  }
+}
