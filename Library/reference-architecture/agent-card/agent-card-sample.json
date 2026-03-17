@@ -1,0 +1,323 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "Trade Reconciliation Agent",
+  "description": "Identifies and resolves trade breaks between internal books-and-records and counterparty confirmations for fixed income products. Executes standard corrections within a predefined playbook and escalates exceptions to operations staff. This agent does not interact with settlement systems without checkpoint approval and does not initiate contact with counterparties.",
+  "url": "https://agents.internal.globalbank.com/trade-recon/a2a",
+  "version": "2.3.1",
+  "documentationUrl": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent",
+  "lastUpdated": "2026-03-12T09:00:00Z",
+  "tags": ["reconciliation", "trade-ops", "fixed-income", "break-management"],
+
+  "provider": {
+    "name": "Global Bank - Markets Technology",
+    "businessLine": "Markets / Fixed Income",
+    "department": "Trade Operations",
+    "businessOwner": {
+      "name": "Sarah Chen",
+      "email": "sarah.chen@globalbank.com",
+      "role": "Head of Trade Operations, Fixed Income"
+    },
+    "teamContact": "trade-ops-agents@globalbank.com"
+  },
+
+  "capabilities": {
+    "a2aVersion": "1.0",
+    "streaming": false,
+    "pushNotifications": true,
+    "stateTransitionHistory": true
+  },
+
+  "defaultInputModes": ["application/json", "text/plain"],
+  "defaultOutputModes": ["application/json", "text/plain"],
+
+  "securitySchemes": {
+    "enterpriseOAuth2": {
+      "type": "oauth2",
+      "description": "Enterprise SSO via the internal OAuth2 authorisation server. Requires membership in the 'trade-ops-agents' IAM group.",
+      "flows": {
+        "clientCredentials": {
+          "tokenUrl": "https://auth.globalbank.com/oauth/token",
+          "scopes": {
+            "trade-recon:read": "Read access to trade records and reconciliation data",
+            "trade-recon:execute": "Permission to submit correction recommendations for human approval"
+          }
+        }
+      }
+    }
+  },
+
+  "security": [
+    { "enterpriseOAuth2": ["trade-recon:read", "trade-recon:execute"] }
+  ],
+
+  "skills": [
+    {
+      "id": "identify_breaks",
+      "name": "Identify Trade Breaks",
+      "description": "Compares internal trade records against counterparty confirmations and identifies discrepancies. This skill is read-only and does not mutate any system state. It does not access settlement systems, payment instructions, or any data domain beyond TradeData and MarketData.",
+      "tags": ["reconciliation", "breaks", "read-only"],
+      "examples": [
+        "Identify all open breaks for CUSIP US912810TM79 as of today",
+        "List unmatched trades with Barclays for settlement date 2026-03-14"
+      ],
+      "requiresHumanApproval": false,
+      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/identify-breaks"
+    },
+    {
+      "id": "execute_standard_correction",
+      "name": "Execute Standard Correction",
+      "description": "Applies a predefined playbook correction to a trade break. Only the correction types listed in the approvedActionList may be executed. The agent presents a structured recommendation; a human operations officer must issue an approval token before any correction is applied to downstream systems. The agent cannot submit corrections without a valid approval token.",
+      "tags": ["reconciliation", "correction", "playbook"],
+      "examples": [
+        "Apply standard quantity correction for break ID BR-20260312-0042",
+        "Execute accrued interest adjustment for break BR-20260312-0099"
+      ],
+      "requiresHumanApproval": true,
+      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/standard-correction"
+    },
+    {
+      "id": "escalate_exception",
+      "name": "Escalate Exception",
+      "description": "Raises an exception for a break that falls outside the standard playbook. Creates a case in the exception management system and notifies the operations team. Does not attempt to resolve the break.",
+      "tags": ["escalation", "exception-management"],
+      "examples": [
+        "Escalate break BR-20260312-0101: complex novation mismatch, outside playbook scope"
+      ],
+      "requiresHumanApproval": false,
+      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/escalate-exception"
+    },
+    {
+      "id": "generate_reconciliation_report",
+      "name": "Generate Reconciliation Report",
+      "description": "Produces a daily reconciliation summary report for a given book, counterparty, or asset class. Output is read-only and suitable for regulatory reporting purposes. Does not submit to any regulatory system directly.",
+      "tags": ["reporting", "reconciliation", "read-only"],
+      "examples": [
+        "Generate end-of-day reconciliation report for Fixed Income book FI-001",
+        "Produce break ageing report for counterparty JP Morgan as of 2026-03-12"
+      ],
+      "requiresHumanApproval": false,
+      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/reconciliation-report"
+    }
+  ],
+
+  "governance": {
+    "autonomyLevel": "A2",
+    "autonomyLevelJustification": "This agent is classified at A2 because it executes predefined reconciliation procedures from a fixed approved action list without requiring human approval at each step, but requires checkpoint approval before any correction reaches a downstream settlement system. It does not decompose novel goals, select procedures dynamically, or delegate tasks to other agents. These constraints are enforced at the implementation layer, not solely by policy. Human oversight takes the form of a named operations officer reviewing each correction recommendation and issuing an approval token via the internal checkpoint portal before any action is applied to a settlement system. The agent cannot bypass or replicate this approval step. All checkpoint decisions are recorded in the audit trail.",
+
+    "modelRiskTier": "Moderate",
+
+    "humanOversightModel": "human-reviews-at-checkpoints",
+
+    "approvedActionList": [
+      "query_internal_trade_book",
+      "query_counterparty_confirmation_feed",
+      "apply_quantity_adjustment",
+      "apply_price_adjustment",
+      "apply_accrued_interest_correction",
+      "apply_settlement_date_amendment",
+      "create_exception_case",
+      "send_escalation_notification",
+      "generate_reconciliation_report"
+    ],
+
+    "escalationContacts": [
+      {
+        "name": "Trade Operations Desk",
+        "email": "trade-ops-desk@globalbank.com",
+        "role": "Operations",
+        "escalationTriggers": [
+          "Break type not in approved playbook",
+          "Correction value exceeds USD 1,000,000",
+          "Agent confidence score below 0.85",
+          "Counterparty dispute raised"
+        ]
+      },
+      {
+        "name": "Markets Technology On-Call",
+        "email": "markets-tech-oncall@globalbank.com",
+        "role": "Technology Incident",
+        "escalationTriggers": [
+          "Agent unresponsive",
+          "Unexpected tool failure",
+          "Data feed connection error"
+        ]
+      }
+    ],
+
+    "changeApprovalReference": "CHG-2026-00412",
+
+    "modelRisk": {
+      "modelInventoryId": "MRM-AGENT-0047",
+      "lastValidationDate": "2026-01-15",
+      "nextReviewDate": "2026-07-15"
+    }
+  },
+
+  "dataHandling": {
+    "dataClassification": "Confidential",
+
+    "permittedDataDomains": [
+      "TradeData",
+      "MarketData"
+    ],
+
+    "dataResidency": {
+      "permittedRegions": ["US", "GB"],
+      "restrictedRegions": ["CN", "RU"]
+    },
+
+    "retentionPolicy": {
+      "inputRetentionDays": 2555,
+      "outputRetentionDays": 2555,
+      "policyReference": "DRP-2025-003: Trade Data Retention (7 years)"
+    }
+  },
+
+  "compliance": {
+    "applicableRegulations": [
+      {
+        "name": "SR 11-7",
+        "applicability": "Model risk management: validation, ongoing monitoring, and governance of this agent under Federal Reserve and OCC guidance. Covered fields: governance.modelRisk, provider.businessOwner, compliance.explainability.",
+        "complianceOwner": "Model Risk Management Team"
+      },
+      {
+        "name": "EU AI Act",
+        "applicability": "Article 9 (Risk management system), Article 13 (Transparency), Article 14 (Human oversight). This agent is assessed as limited-risk under Article 6.",
+        "complianceOwner": "AI Governance Office"
+      },
+      {
+        "name": "DORA",
+        "applicability": "Article 17 (ICT incident management), Article 6 (ICT risk management framework). Covered fields: compliance.incidentResponse, compliance.auditTrail.",
+        "complianceOwner": "Operational Resilience Team"
+      },
+      {
+        "name": "MiFID II",
+        "applicability": "Trade reporting and recordkeeping obligations for fixed income instruments processed by this agent.",
+        "complianceOwner": "Regulatory Reporting Team"
+      },
+      {
+        "name": "Internal AI Governance Policy AIGOV-2025-001",
+        "applicability": "Firm-wide AI governance policy. Requires model inventory registration, annual review, and autonomy level classification before production deployment.",
+        "complianceOwner": "AI Governance Office"
+      }
+    ],
+
+    "auditTrail": {
+      "enabled": true,
+      "immutable": true,
+      "retentionDays": 2555,
+      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/audit-logging-spec"
+    },
+
+    "explainability": {
+      "supported": true,
+      "method": "Each correction recommendation includes a structured rationale: the break identified, the playbook rule applied, the data sources consulted, and the confidence score. Chain-of-thought logs are retained for 7 years per DRP-2025-003."
+    },
+
+    "incidentResponse": {
+      "killSwitchEndpoint": null,
+      "incidentContactEmail": "ai-incident-response@globalbank.com",
+      "planReference": "IRP-AGENT-2025-007"
+    }
+  },
+
+  "agentSecurity": {
+    "cardSigning": {
+      "signed": true,
+      "jwksUrl": "https://agents.internal.globalbank.com/.well-known/jwks.json"
+    },
+
+    "promptInjectionControls": {
+      "controlsInPlace": true,
+      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/prompt-injection-controls"
+    },
+
+    "inputOutputValidation": {
+      "inputValidationEnabled": true,
+      "outputValidationEnabled": true,
+      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/validation-spec"
+    },
+
+    "networkAccessControl": {
+      "accessPolicy": "private-network-only",
+      "reference": "https://confluence.internal.globalbank.com/display/INFOSEC/agent-network-policy"
+    },
+
+    "agentIdentityVerification": {
+      "mutualAuthenticationEnabled": false,
+      "trustModel": "OAuth2 client credentials per calling system identity. mTLS is on the roadmap for the next major release."
+    },
+
+    "rateLimiting": {
+      "enabled": true,
+      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/rate-limiting-config"
+    }
+  },
+
+  "dependencies": {
+
+    "mcpServers": [
+      {
+        "id": "mcp-internal-trade-book",
+        "name": "Internal Trade Book MCP",
+        "transport": "sse",
+        "endpoint": "https://mcp.internal.globalbank.com/trade-book",
+        "providerType": "internal",
+        "permittedDataDomains": ["TradeData"],
+        "approvalReference": "CHG-2026-00398",
+        "securityReviewReference": "SEC-REVIEW-2026-0041"
+      },
+      {
+        "id": "mcp-counterparty-confirmation",
+        "name": "Counterparty Confirmation Feed MCP",
+        "transport": "sse",
+        "endpoint": "https://mcp.internal.globalbank.com/confirm-feed",
+        "providerType": "internal",
+        "permittedDataDomains": ["TradeData"],
+        "approvalReference": "CHG-2026-00399",
+        "securityReviewReference": "SEC-REVIEW-2026-0041"
+      },
+      {
+        "id": "mcp-market-data-bloomberg",
+        "name": "Bloomberg Market Data MCP",
+        "transport": "http",
+        "endpoint": "https://mcp-gateway.bloomberg.com/a2a",
+        "providerType": "third-party",
+        "vendor": "Bloomberg L.P.",
+        "permittedDataDomains": ["MarketData"],
+        "approvalReference": "VRA-2025-0112",
+        "securityReviewReference": "SEC-REVIEW-2025-0089"
+      }
+    ],
+
+    "agentSkills": [
+      {
+        "id": "skill-break-classifier",
+        "name": "Trade Break Classifier",
+        "version": "1.2.0",
+        "source": "internal",
+        "containsExecutableCode": true,
+        "permittedDataDomains": ["TradeData", "MarketData"],
+        "approvalReference": "CHG-2026-00401",
+        "securityReviewReference": "SEC-REVIEW-2026-0043",
+        "skillCardReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/skills/break-classifier/SKILL.md"
+      },
+      {
+        "id": "skill-playbook-executor",
+        "name": "Reconciliation Playbook Executor",
+        "version": "2.0.1",
+        "source": "internal",
+        "containsExecutableCode": true,
+        "permittedDataDomains": ["TradeData"],
+        "approvalReference": "CHG-2026-00402",
+        "securityReviewReference": "SEC-REVIEW-2026-0043",
+        "skillCardReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/skills/playbook-executor/SKILL.md"
+      }
+    ],
+
+    "additionalProtocols": []
+
+  },
+
+  "extensions": {}
+}
