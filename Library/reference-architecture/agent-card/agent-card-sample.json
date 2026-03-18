@@ -7,7 +7,7 @@
   "documentationUrl": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent",
   "lastUpdated": "2026-03-12T09:00:00Z",
   "tags": ["reconciliation", "trade-ops", "fixed-income", "break-management"],
-
+  "registryRef": "https://agent-registry.internal.globalbank.com/agents/trade-recon-agent-v2",
   "provider": {
     "name": "Global Bank - Markets Technology",
     "businessLine": "Markets / Fixed Income",

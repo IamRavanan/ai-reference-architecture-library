@@ -66,7 +66,11 @@
       "items": { "type": "string" },
       "description": "Keywords for agent discovery and categorisation (e.g. 'kyc', 'reconciliation', 'fraud-detection')."
     },
-
+    "registryRef": {
+      "type": "string",
+      "format": "uri",
+      "description": "URI pointing to this agent's record in the institution's agent registry. Links the runtime Agent Card to the full governance lifecycle record. See the Agent Card and Registry section in the README."
+    },
     "provider": {
       "type": "object",
       "description": "The team or organisation accountable for this agent.",
