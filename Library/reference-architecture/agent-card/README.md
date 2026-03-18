@@ -557,6 +557,72 @@ This field accommodates protocols beyond A2A and MCP that the agent participates
 [↑ Back to contents](#table-of-contents)
 
 ---
+## Validating an Agent Card
+
+The repository includes a Python script that validates an agent card in two passes: first against the JSON Schema, then against the 15 production registration rules defined below.
+
+**Requirements**
+
+Python 3.8 or later. Compatible with Windows, macOS, and Linux.
+
+**Setting up a virtual environment (recommended for local testing)**
+
+A virtual environment keeps the dependency isolated from your system Python installation.
+
+macOS and Linux:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install jsonschema
+```
+
+Windows (Command Prompt):
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+pip install jsonschema
+```
+
+Windows (PowerShell):
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install jsonschema
+```
+
+**Usage**
+```bash
+# Validate using the schema in the same directory
+python validate_fsi_agent_card.py my-agent-card.json
+
+# Specify a schema path explicitly
+python validate_fsi_agent_card.py my-agent-card.json --schema /path/to/fsi-agent-card-schema.json
+```
+
+**What it checks**
+
+The script runs two steps in sequence:
+
+1. **Schema validation** — verifies all required fields are present, types are correct, and enum values are within the permitted set.
+2. **Production registration rules** — enforces the 15 rules listed in the next section, including the oversight model-to-autonomy level mapping, data domain subset checks on MCP server entries, pinned skill versions, HTTPS enforcement, and the requirement for vendor risk assessment references on third-party MCP servers.
+
+It also surfaces advisory warnings for conditions that are not hard failures but warrant attention — such as a model validation date older than 12 months, or card signing enabled without a JWKS URL.
+
+**Exit codes**
+
+| Code | Meaning |
+|:---:|:---|
+| `0` | All checks passed |
+| `1` | One or more errors found; resolve before registering in production |
+| `2` | Usage error or file not found |
+
+> Colour output is enabled automatically on supported terminals. To disable it, set the `NO_COLOR` environment variable before running the script (`export NO_COLOR=1` on macOS/Linux, `set NO_COLOR=1` on Windows).
+
+
+
+[↑ Back to contents](#table-of-contents)
+
+---
 
 ## Production Registration Rules
 

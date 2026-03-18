@@ -9,6 +9,7 @@ website/.docusaurus
 .cache-loader
 
 # misc
+.venv
 .DS_Store
 .env.local
 .env.development.local

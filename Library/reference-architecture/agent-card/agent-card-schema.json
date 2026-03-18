@@ -532,7 +532,10 @@
           "required": ["incidentContactEmail", "planReference"],
           "properties": {
             "killSwitchEndpoint": {
-              "type": "string",
+              "type": [
+                "string",
+                "null"
+              ],
               "format": "uri",
               "description": "An externally accessible endpoint that immediately halts the agent. Required for A3 and above. Must be independent of the agent process and not disableable by the agent itself."
             },
