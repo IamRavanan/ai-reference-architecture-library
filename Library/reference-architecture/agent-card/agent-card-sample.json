@@ -2,22 +2,24 @@
   "schemaVersion": "1.0.0",
   "name": "Trade Reconciliation Agent",
   "description": "Identifies and resolves trade breaks between internal books-and-records and counterparty confirmations for fixed income products. Executes standard corrections within a predefined playbook and escalates exceptions to operations staff. This agent does not interact with settlement systems without checkpoint approval and does not initiate contact with counterparties.",
-  "url": "https://agents.internal.globalbank.com/trade-recon/a2a",
+  "url": "https://agents.internal.finos-demo-bank.example.com/trade-recon/a2a",
   "version": "2.3.1",
-  "documentationUrl": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent",
+  "documentationUrl": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent",
   "lastUpdated": "2026-03-12T09:00:00Z",
   "tags": ["reconciliation", "trade-ops", "fixed-income", "break-management"],
-  "registryRef": "https://agent-registry.internal.globalbank.com/agents/trade-recon-agent-v2",
+
+  "registryRef": "https://agent-registry.internal.finos-demo-bank.example.com/agents/trade-recon-agent-v2",
+
   "provider": {
-    "name": "Global Bank - Markets Technology",
+    "name": "FINOS Demo Bank - Markets Technology",
     "businessLine": "Markets / Fixed Income",
     "department": "Trade Operations",
     "businessOwner": {
-      "name": "Sarah Chen",
-      "email": "sarah.chen@globalbank.com",
+      "name": "Jane Doe",
+      "email": "jane.doe@finos-demo-bank.example.com",
       "role": "Head of Trade Operations, Fixed Income"
     },
-    "teamContact": "trade-ops-agents@globalbank.com"
+    "teamContact": "trade-ops-agents@finos-demo-bank.example.com"
   },
 
   "capabilities": {
@@ -36,7 +38,7 @@
       "description": "Enterprise SSO via the internal OAuth2 authorisation server. Requires membership in the 'trade-ops-agents' IAM group.",
       "flows": {
         "clientCredentials": {
-          "tokenUrl": "https://auth.globalbank.com/oauth/token",
+          "tokenUrl": "https://auth.finos-demo-bank.example.com/oauth/token",
           "scopes": {
             "trade-recon:read": "Read access to trade records and reconciliation data",
             "trade-recon:execute": "Permission to submit correction recommendations for human approval"
@@ -61,7 +63,7 @@
         "List unmatched trades with Barclays for settlement date 2026-03-14"
       ],
       "requiresHumanApproval": false,
-      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/identify-breaks"
+      "specReference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/skills/identify-breaks"
     },
     {
       "id": "execute_standard_correction",
@@ -73,7 +75,7 @@
         "Execute accrued interest adjustment for break BR-20260312-0099"
       ],
       "requiresHumanApproval": true,
-      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/standard-correction"
+      "specReference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/skills/standard-correction"
     },
     {
       "id": "escalate_exception",
@@ -84,7 +86,7 @@
         "Escalate break BR-20260312-0101: complex novation mismatch, outside playbook scope"
       ],
       "requiresHumanApproval": false,
-      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/escalate-exception"
+      "specReference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/skills/escalate-exception"
     },
     {
       "id": "generate_reconciliation_report",
@@ -96,7 +98,7 @@
         "Produce break ageing report for counterparty JP Morgan as of 2026-03-12"
       ],
       "requiresHumanApproval": false,
-      "specReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/skills/reconciliation-report"
+      "specReference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/skills/reconciliation-report"
     }
   ],
 
@@ -123,7 +125,7 @@
     "escalationContacts": [
       {
         "name": "Trade Operations Desk",
-        "email": "trade-ops-desk@globalbank.com",
+        "email": "trade-ops-desk@finos-demo-bank.example.com",
         "role": "Operations",
         "escalationTriggers": [
           "Break type not in approved playbook",
@@ -134,7 +136,7 @@
       },
       {
         "name": "Markets Technology On-Call",
-        "email": "markets-tech-oncall@globalbank.com",
+        "email": "markets-tech-oncall@finos-demo-bank.example.com",
         "role": "Technology Incident",
         "escalationTriggers": [
           "Agent unresponsive",
@@ -206,7 +208,7 @@
       "enabled": true,
       "immutable": true,
       "retentionDays": 2555,
-      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/audit-logging-spec"
+      "reference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/audit-logging-spec"
     },
 
     "explainability": {
@@ -216,7 +218,7 @@
 
     "incidentResponse": {
       "killSwitchEndpoint": null,
-      "incidentContactEmail": "ai-incident-response@globalbank.com",
+      "incidentContactEmail": "ai-incident-response@finos-demo-bank.example.com",
       "planReference": "IRP-AGENT-2025-007"
     }
   },
@@ -224,23 +226,23 @@
   "agentSecurity": {
     "cardSigning": {
       "signed": true,
-      "jwksUrl": "https://agents.internal.globalbank.com/.well-known/jwks.json"
+      "jwksUrl": "https://agents.internal.finos-demo-bank.example.com/.well-known/jwks.json"
     },
 
     "promptInjectionControls": {
       "controlsInPlace": true,
-      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/prompt-injection-controls"
+      "reference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/security/prompt-injection-controls"
     },
 
     "inputOutputValidation": {
       "inputValidationEnabled": true,
       "outputValidationEnabled": true,
-      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/validation-spec"
+      "reference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/security/validation-spec"
     },
 
     "networkAccessControl": {
       "accessPolicy": "private-network-only",
-      "reference": "https://confluence.internal.globalbank.com/display/INFOSEC/agent-network-policy"
+      "reference": "https://confluence.internal.finos-demo-bank.example.com/display/INFOSEC/agent-network-policy"
     },
 
     "agentIdentityVerification": {
@@ -250,7 +252,7 @@
 
     "rateLimiting": {
       "enabled": true,
-      "reference": "https://confluence.internal.globalbank.com/display/AIAGENTS/trade-recon-agent/security/rate-limiting-config"
+      "reference": "https://confluence.internal.finos-demo-bank.example.com/display/AIAGENTS/trade-recon-agent/security/rate-limiting-config"
     }
   },
 
@@ -261,7 +263,7 @@
         "id": "mcp-internal-trade-book",
         "name": "Internal Trade Book MCP",
         "transport": "sse",
-        "endpoint": "https://mcp.internal.globalbank.com/trade-book",
+        "endpoint": "https://mcp.internal.finos-demo-bank.example.com/trade-book",
         "providerType": "internal",
         "permittedDataDomains": ["TradeData"],
         "approvalReference": "CHG-2026-00398",
@@ -271,7 +273,7 @@
         "id": "mcp-counterparty-confirmation",
         "name": "Counterparty Confirmation Feed MCP",
         "transport": "sse",
-        "endpoint": "https://mcp.internal.globalbank.com/confirm-feed",
+        "endpoint": "https://mcp.internal.finos-demo-bank.example.com/confirm-feed",
         "providerType": "internal",
         "permittedDataDomains": ["TradeData"],
         "approvalReference": "CHG-2026-00399",
@@ -300,7 +302,7 @@
         "permittedDataDomains": ["TradeData", "MarketData"],
         "approvalReference": "CHG-2026-00401",
         "securityReviewReference": "SEC-REVIEW-2026-0043",
-        "skillCardReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/skills/break-classifier/SKILL.md"
+        "skillCardReference": "https://github.com/finos-labs/skills/break-classifier/SKILL.md"
       },
       {
         "id": "skill-playbook-executor",
@@ -311,7 +313,7 @@
         "permittedDataDomains": ["TradeData"],
         "approvalReference": "CHG-2026-00402",
         "securityReviewReference": "SEC-REVIEW-2026-0043",
-        "skillCardReference": "https://confluence.internal.globalbank.com/display/AIAGENTS/skills/playbook-executor/SKILL.md"
+        "skillCardReference": "https://github.com/finos-labs/skills/playbook-executor/skill.md"
       }
     ],
 
