@@ -15,6 +15,7 @@ website/.docusaurus
 .env.development.local
 .env.test.local
 .env.production.local
+.venv
 
 website/npm-debug.log*
 website/yarn-debug.log*
