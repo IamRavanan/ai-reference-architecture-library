@@ -76,14 +76,14 @@ Orchestrators, registries, and peer agents retrieve this document before delegat
 
 ## Why a Financial Institution Requires More Than the Standard Agent Card
 
-The standard A2A Agent Card answers three questions: what the agent can do, how to communicate with it, and who built it. Those answers are sufficient for general software engineering purposes. They are not sufficient for a regulated financial institution.
+The standard A2A Agent Card primarily answers discovery and interoperability questions: what the agent can do, how to communicate with it, and who built it. It also standardises authentication requirements, interaction modes, and authenticated extended cards. These answers are sufficient for general software engineering purposes. They are not sufficient for a regulated financial institution.
 
 Regulators, model risk managers, and internal audit functions require answers to a considerably broader set of questions before an agent may be approved for use in a production environment.
 
 | Regulatory or Governance Question | Standard Agent Card | FSI Agent Card | FSI Schema Field |
 |:---|:---:|:---:|:---|
 | What level of autonomy does this agent operate at? | No | Yes | `governance.autonomyLevel` |
-| Who is the accountable business owner? | No | Yes | `provider.businessOwner` |
+| Who is the accountable business owner? | No | Yes | `provider.businessOwner` (Note: The standard provider field identifies who built the agent, not who is accountable for it. The FSI extension adds businessOwner to capture accountability distinct from provenance.) |
 | What model risk tier applies under SR 11-7? | No | Yes | `governance.modelRiskTier` |
 | Is there a human in the loop, and at what points? | No | Yes | `governance.humanOversightModel` |
 | What actions is this agent permitted to take? | No | Yes | `governance.approvedActionList` |
@@ -98,7 +98,7 @@ Regulators, model risk managers, and internal audit functions require answers to
 | Can the agent be halted immediately? | No | Yes | `compliance.incidentResponse.killSwitchEndpoint` |
 | Is the Agent Card signed and verifiable? | No | Yes | `agentSecurity.cardSigning` |
 | Are prompt injection controls in place? | No | Yes | `agentSecurity.promptInjectionControls` |
-| Is the agent endpoint network-restricted? | No | Yes | `agentSecurity.networkAccessControl` |
+| Is the agent endpoint network-restricted? | Not a first-class governance field in the standard card (A2A guidance discusses secure endpoints including mTLS and network restrictions, but does not model this as an explicit policy field) | Yes | `agentSecurity.networkAccessControl` |
 
 
 [↑ Back to contents](#table-of-contents)
